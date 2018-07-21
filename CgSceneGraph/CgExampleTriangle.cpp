@@ -116,12 +116,13 @@ const std::vector<glm::vec3>& CgExampleTriangle::getFaceColors() const
     return m_face_colors;
 }
 
-CgAppearance CgExampleTriangle::getAppearance() const
+CgAppearance *CgExampleTriangle::getAppearance() const
 {
     return appearance;
 }
 
-void CgExampleTriangle::setAppearance(const CgAppearance &value)
+void CgExampleTriangle::setAppearance(CgAppearance *value)
 {
     appearance = value;
 }
+

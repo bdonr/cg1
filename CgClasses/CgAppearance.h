@@ -8,6 +8,7 @@ private: glm::vec4 material;
     glm::vec4 ambiente;
     glm::vec4 diffuse;
     glm::vec4 specular;
+    glm::vec4 color;
 
 public:
     CgAppearance();
@@ -19,6 +20,8 @@ public:
     void setAmbiente(const glm::vec4 &value);
     glm::vec4 getMaterial() const;
     void setMaterial(const glm::vec4 &value);
+    glm::vec4 getColor() const;
+    void setColor(const glm::vec4 &value);
 };
 
 #endif // CGAPPEARANCE_H

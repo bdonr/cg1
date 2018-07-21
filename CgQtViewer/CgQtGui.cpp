@@ -208,7 +208,7 @@ void CgQtGui::slotLoadMeshFile()
 
 
     CgBaseEvent* e = new CgLoadObjFileEvent(Cg::LoadObjFileEvent, file.toStdString());
-
+    std::cout<<file.toStdString()<<std::endl;
     notifyObserver(e);
 }
 

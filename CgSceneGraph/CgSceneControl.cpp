@@ -19,7 +19,22 @@ CgSceneControl::CgSceneControl()
       m_lookAt_matrix= glm::lookAt(glm::vec3(0.0,0.0,1.0),glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0));
      m_proj_matrix= glm::mat4x4(glm::vec4(1.792591, 0.0, 0.0, 0.0), glm::vec4(0.0, 1.792591, 0.0, 0.0), glm::vec4(0.0, 0.0, -1.0002, -1.0), glm::vec4(0.0, 0.0, -0.020002, 0.0));
    m_trackball_rotation=glm::mat4(1.);
-     m_triangle= new CgExampleTriangle();
+   m_triangle = new CgExampleTriangle();
+
+   //.33 .22 .03 1.0 A
+       // .78 .57 .11 1.0 D
+       // .99 .94 .81 1.0 Sa
+       // 27.9 S
+   CgAppearance *x = new CgAppearance();
+   x->setAmbiente(glm::vec4(1.0,1.0,1.0,0));
+   x->setColor(glm::vec4(0,0,1.0,0));
+   x->setAmbiente(glm::vec4(.33,.22,.03,1.0));
+   x->setDiffuse(glm::vec4(.99,.94,.81,1.0));
+   x->setSpecular(glm::vec4(.99,.94,.81,1.0));
+
+   m_triangle->setAppearance(x);
+
+
 }
 
 
@@ -38,15 +53,41 @@ void CgSceneControl::setRenderer(CgBaseRenderer* r)
 }
 
 
+void CgSceneControl::createbunny()
+{
+
+
+    ObjLoader* loader= new ObjLoader();
+    loader->load("/home/don/Schreibtisch/Sommer2018/CgData/bunny.obj");
+
+    std::vector<glm::vec3> pos;
+    loader->getPositionData(pos);
+
+     std::vector<glm::vec3> norm;
+     loader->getNormalData(norm);
+
+      std::vector<unsigned int> indx;
+      loader->getFaceIndexData(indx);
+
+
+
+    m_triangle->init(pos,norm,indx);
+    m_renderer->init(m_triangle);
+    m_renderer->render(m_triangle);
+}
+
 void CgSceneControl::renderObjects()
 {
 
     // Materialeigenschaften setzen
     // sollte ja eigentlich pro Objekt unterschiedlich sein können, naja bekommen sie schon hin....
 
-    m_renderer->setUniformValue("mycolor",glm::vec4(1.0,0.0,0.0,1.0));
+    m_renderer->setUniformValue("mycolor",m_triangle->getAppearance()->getColor());
 
-
+//.33 .22 .03 1.0 A
+    // .78 .57 .11 1.0 D
+    // .99 .94 .81 1.0 Sa
+    // 27.9 S
     m_renderer->setUniformValue("matDiffuseColor",glm::vec4(0.35,0.31,0.09,1.0));
     m_renderer->setUniformValue("lightDiffuseColor",glm::vec4(1.0,1.0,1.0,1.0));
 
@@ -68,11 +109,11 @@ void CgSceneControl::renderObjects()
     m_renderer->setUniformValue("projMatrix",m_proj_matrix);
     m_renderer->setUniformValue("modelviewMatrix",mv_matrix);
     m_renderer->setUniformValue("normalMatrix",normal_matrix);
-
-    if(m_triangle!=NULL){
+    createbunny();
+   /* if(m_triangle!=NULL){
     m_renderer->init(m_triangle);
     m_renderer->render(m_triangle);
-    }
+    }*/
 
 }
 

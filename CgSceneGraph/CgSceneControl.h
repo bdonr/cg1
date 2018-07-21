@@ -19,6 +19,8 @@ public:
 
     void renderObjects();
 
+    void createbunny();
+
 private:
 
     CgBaseRenderer* m_renderer;

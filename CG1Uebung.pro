@@ -19,7 +19,9 @@ SOURCES += main.cpp \
     CgEvents/CgLoadObjFileEvent.cpp \
     CgUtils/ObjLoader.cpp \
     CgEvents/CgTrackballEvent.cpp \
-    CgClasses/CgAppearance.cpp
+    CgClasses/CgAppearance.cpp \
+    CgClasses/CgDrawobject.cpp \
+    CgEvents/Lightevent.cpp
 
 HEADERS += \
     CgQtViewer/CgQtGLRenderWidget.h \
@@ -47,5 +49,7 @@ HEADERS += \
     CgUtils/ObjLoader.h \
     CgBase/CgBaseImage.h \
     CgEvents/CgTrackballEvent.h \
-    CgClasses/CgAppearance.h
+    CgClasses/CgAppearance.h \
+    CgClasses/CgDrawobject.h \
+    CgEvents/Lightevent.h
 

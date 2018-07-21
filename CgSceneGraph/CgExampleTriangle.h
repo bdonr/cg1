@@ -35,11 +35,8 @@ public:
     const std::vector<glm::vec3>& getFaceColors() const;
 
 
-
-
-    CgAppearance getAppearance() const;
-
-    void setAppearance(const CgAppearance &value);
+    CgAppearance *getAppearance() const;
+    void setAppearance(CgAppearance *value);
 
 private:
 
@@ -55,7 +52,9 @@ private:
 
     const Cg::ObjectType m_type;
     const unsigned int m_id;
-    CgAppearance appearance;
+    CgAppearance *appearance;
+
+
 
 };
 
