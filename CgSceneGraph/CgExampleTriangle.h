@@ -6,7 +6,8 @@
 #include <string>
 #include "CgBase/CgBaseTriangleMesh.h"
 #include "CgClasses/CgAppearance.h"
-
+#include <iostream>
+#include <map>
 class CgExampleTriangle : public CgBaseTriangleMesh
 {
 
@@ -22,7 +23,7 @@ public:
 
     void init (std::vector<glm::vec3> arg_verts, std::vector<glm::vec3> arg_normals, std::vector<unsigned int> arg_triangle_indices);
     void init( std::string filename);
-
+    void calculateNormals();
     //inherited from CgBaseTriangleMesh
     const std::vector<glm::vec3>& getVertices() const;
     const std::vector<glm::vec3>& getVertexNormals() const;
@@ -37,6 +38,8 @@ public:
 
     CgAppearance *getAppearance() const;
     void setAppearance(CgAppearance *value);
+    std::map<int, std::vector<glm::vec3> *> getMap_vertex_normals() const;
+    void setMap_vertex_normals(const std::map<int, std::vector<glm::vec3> *> &value);
 
 private:
 
@@ -44,6 +47,7 @@ private:
     std::vector<glm::vec3> m_vertex_normals;
     std::vector<glm::vec3> m_vertex_colors;
     std::vector<glm::vec2> m_tex_coords;
+    std::map<int, std::vector<glm::vec3>*> map_vertex_normals;
 
     std::vector<unsigned int>  m_triangle_indices;
 
@@ -53,6 +57,7 @@ private:
     const Cg::ObjectType m_type;
     const unsigned int m_id;
     CgAppearance *appearance;
+    void calculateVertexNormals();
 
 
 

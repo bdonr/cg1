@@ -69,8 +69,6 @@ void CgSceneControl::createbunny()
       std::vector<unsigned int> indx;
       loader->getFaceIndexData(indx);
 
-
-
     m_triangle->init(pos,norm,indx);
     m_renderer->init(m_triangle);
     m_renderer->render(m_triangle);
@@ -91,10 +89,8 @@ void CgSceneControl::renderObjects()
     m_renderer->setUniformValue("matDiffuseColor",glm::vec4(0.35,0.31,0.09,1.0));
     m_renderer->setUniformValue("lightDiffuseColor",glm::vec4(1.0,1.0,1.0,1.0));
 
-
     m_renderer->setUniformValue("matAmbientColor",glm::vec4(0.25,0.22,0.06,1.0));
     m_renderer->setUniformValue("lightAmbientColor",glm::vec4(1.0,1.0,1.0,1.0));
-
 
     m_renderer->setUniformValue("matSpecularColor",glm::vec4(0.8,0.72,0.21,1.0));
     m_renderer->setUniformValue("lightSpecularColor",glm::vec4(1.0,1.0,1.0,1.0));
@@ -155,7 +151,7 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
         if(ev->text()=="+")
         {
             glm::mat4 scalemat;
-            scalemat= glm::scale(scalemat,glm::vec3(1.2,1.2,1.2));
+            scalemat= glm::scale(scalemat,glm::vec3(1.1,1.1,1.1));
             m_current_transformation=m_current_transformation*scalemat;
             m_renderer->redraw();
         }

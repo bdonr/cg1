@@ -1,6 +1,7 @@
 #include "CgExampleTriangle.h"
 #include "CgBase/CgEnums.h"
 #include "CgUtils/ObjLoader.h"
+#include "CgUtils/CgUtils.h"
 
 CgExampleTriangle::CgExampleTriangle():
 m_type(Cg::TriangleMesh),
@@ -55,18 +56,57 @@ CgExampleTriangle::~CgExampleTriangle()
     m_triangle_indices.clear();
     m_face_normals.clear();
     m_face_colors.clear();
+    map_vertex_normals.clear();
 }
 
-void CgExampleTriangle::init( std::vector<glm::vec3> arg_verts,  std::vector<glm::vec3> arg_normals, std::vector<unsigned int> arg_triangle_indices)
+/**
+ * calculate vertext normals
+ * @brief CgExampleTriangle::calculateVertexNormals
+ */
+void CgExampleTriangle::calculateVertexNormals()
 {
+    for(int i = 0; i < (int) m_vertices.size(); i++){
+        map_vertex_normals[i] = new std::vector<glm::vec3>;
+        }
+        
+        int p1, p2, p3;
+        for(int i = 0; i <= m_triangle_indices.size() - 3; i += 3){
+        p1 = m_triangle_indices.at(i);
+        p2 = m_triangle_indices.at(i+1);
+        p3 = m_triangle_indices.at(i+2);
+        
+        //Calculate and push faceNormal
+        glm::vec3 faceNormal = CgUtils::calcFaceNormal(m_vertices.at(p1),m_vertices.at(p2),m_vertices.at(p3));
+        m_face_normals.push_back(faceNormal);
+        
+        //Map faceNormal to vertex
+        map_vertex_normals.at(p1)->push_back(faceNormal);
+        map_vertex_normals.at(p2)->push_back(faceNormal);
+        map_vertex_normals.at(p3)->push_back(faceNormal);
+        }
+}
+
+/**
+ * creating object
+ * @brief CgExampleTriangle::init
+ * @param arg_verts
+ * @param arg_normals
+ * @param arg_triangle_indices
+ */
+void CgExampleTriangle::init(std::vector<glm::vec3> arg_verts,std::vector<glm::vec3> arg_normals,std::vector<unsigned int> arg_triangle_indices){
     m_vertices.clear();
     m_vertex_normals.clear();
     m_triangle_indices.clear();
     m_vertices=arg_verts;
     m_vertex_normals=arg_normals;
     m_triangle_indices=arg_triangle_indices;
+    calculateVertexNormals();
 }
-
+/**
+ * loading object based of its name
+ * @brief CgExampleTriangle::init
+ * @param filename
+ */
 void CgExampleTriangle::init( std::string filename)
 {
     m_vertices.clear();
@@ -125,4 +165,15 @@ void CgExampleTriangle::setAppearance(CgAppearance *value)
 {
     appearance = value;
 }
+
+std::map<int, std::vector<glm::vec3> *> CgExampleTriangle::getMap_vertex_normals() const
+{
+    return map_vertex_normals;
+}
+
+void CgExampleTriangle::setMap_vertex_normals(const std::map<int, std::vector<glm::vec3> *> &value)
+{
+    map_vertex_normals = value;
+}
+
 
