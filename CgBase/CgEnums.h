@@ -32,7 +32,7 @@ namespace Cg{
     CgSomeSpecialEvent3             = 0x0004000,
     CgSomeSpecialEvent4             = 0x0008000,
     CgEventGroup1                   = 0x000f000,
-
+    CgChangeMaterial               = 0x000e000
     // feel free to add whatever you like
     }EventType;
 
@@ -42,7 +42,7 @@ namespace Cg{
 	NoButton     = 0x00000000,
 	LeftButton   = 0x00000001,
 	RightButton  = 0x00000002,
-	MiddleButton = 0x00000004
+    MiddleButton = 0x00000004
 	}MouseButtons;
 
     typedef enum KeyboardModifiers {

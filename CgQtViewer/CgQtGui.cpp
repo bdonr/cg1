@@ -31,6 +31,34 @@
 
 
 
+void CgQtGui::createMats()
+{
+    amb.push_back(glm::vec4(.25f,.25f,.25f,1.0));
+    def.push_back(glm::vec4(.40f,.40f,.40f,1.0));
+    spec.push_back(glm::vec4(.77f,.77f,.77f,1.0));
+    scala.push_back(76.8);
+
+    amb.push_back(glm::vec4(.25f,.21f,.21f,.90f));
+    def.push_back(glm::vec4(0.99f,.83f,.83f,.90f));
+    spec.push_back(glm::vec4(0.30f,0.30f,0.30f,0.90f));
+    scala.push_back(11.3);
+
+    amb.push_back(glm::vec4(0.5f,0.5f,0.7f,0.8f));
+    def.push_back(glm::vec4(0.18f,0.17f,0.23f,0.8f));
+    spec.push_back(glm::vec4(0.33f,0.33f,0.35f,0.8f));
+    scala.push_back(38.4);
+
+    amb.push_back(glm::vec4(0.14f,0.22f,0.16f,0.9f));
+    def.push_back(glm::vec4(0.54f,0.89f,0.63f,0.9f));
+    spec.push_back(glm::vec4(0.32f,0.32f,0.32f,0.9f));
+    scala.push_back(12.8);
+
+    amb.push_back(glm::vec4(0.25f,0.22f,0.6f,1.0f));
+    def.push_back(glm::vec4(0.35f,0.31f,0.9f,1.0f));
+    spec.push_back(glm::vec4(0.8f,0.72f,0.21f,1.0f));
+    scala.push_back(83.2);
+}
+
 CgQtGui::CgQtGui(CgQtMainApplication *mw)
     : m_mainWindow(mw)
 {
@@ -98,7 +126,7 @@ CgQtGui::CgQtGui(CgQtMainApplication *mw)
     filled->setCheckable(true);
     filled->setChecked(false);
 
-
+    createMats();
 
     polygonmode_group->addAction(points);
     polygonmode_group->addAction(wireframe);
@@ -138,48 +166,28 @@ QSlider *CgQtGui::createSlider()
 void CgQtGui::Aufgabe6(QWidget* parent)
 {
     QVBoxLayout *tab1_control = new QVBoxLayout();
-
-
-    /*Example for using a label */
-
-    QLabel *options_label = new QLabel("Options");
-    tab1_control->addWidget(options_label);
-    options_label->setAlignment(Qt::AlignCenter);
-
-
-    /*Example for using a spinbox */
-
-    mySpinBox1 = new QSpinBox();
-    tab1_control->addWidget(mySpinBox1);
-    mySpinBox1->setMinimum(1);
-    mySpinBox1->setMaximum(50);
-    mySpinBox1->setValue(3);
-   // mySpinBox1->setSuffix("   suffix");
-   // mySpinBox1->setPrefix("Prefix:  ");
-    connect(mySpinBox1, SIGNAL(valueChanged(int) ), this, SLOT(slotMySpinBox1Changed()) );
-    tab1_control->addWidget(mySpinBox1);
-
-
-    /*Example for using a checkbox */
-
-    myCheckBox1 = new QCheckBox("enable Option 1");
-    myCheckBox1->setCheckable(true);
-    myCheckBox1->setChecked(false);
-    connect(myCheckBox1, SIGNAL( clicked() ), this, SLOT(slotMyCheckBox1Changed()) );
-    tab1_control->addWidget(myCheckBox1);
-
-
-    /*Example for using a button */
-
-    QPushButton* myButton1 = new QPushButton("&drueck mich");
-    tab1_control->addWidget(myButton1);
-
-    connect(myButton1, SIGNAL( clicked() ), this, SLOT(slotMyButton1Pressed()) );
-
-
-
+    QLabel * opt = new QLabel("selektiere eine Objekteigenschaft");
+    combo_box_objekt = new QComboBox();
+    combo_box_objekt->addItem("Chrom");
+    combo_box_objekt->addItem("Perle");
+    combo_box_objekt->addItem("Obsidian");
+    combo_box_objekt->addItem("Gold");
+    combo_box_objekt->addItem("Kupfer");
+    tab1_control->addWidget(combo_box_objekt);
+    tab1_control->addWidget(opt);
+    connect(combo_box_objekt, SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectMaterial()));
     parent->setLayout(tab1_control);
 
+}
+
+void CgQtGui::selectObjectMaterial()
+{
+    MaterialChangeEvent * materialChangeEvent = new MaterialChangeEvent();
+    materialChangeEvent->setAmb(amb.at(combo_box_objekt->currentIndex()));
+    materialChangeEvent->setDiffuse(def.at(combo_box_objekt->currentIndex()));
+    materialChangeEvent->setScalar(scala.at(combo_box_objekt->currentIndex()));
+    materialChangeEvent->setMat(spec.at(combo_box_objekt->currentIndex()));
+    notifyObserver(materialChangeEvent);
 }
 
 

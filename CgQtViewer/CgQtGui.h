@@ -43,6 +43,9 @@
 
 #include <QWidget>
 #include "../CgBase/CgObservable.h"
+#include <glm/common.hpp>
+#include <QComboBox>
+#include "CgEvents/materialchangeevent.h"
 
 QT_BEGIN_NAMESPACE
 class QSlider;
@@ -70,6 +73,8 @@ public:
     CgBaseRenderer* getRenderer();
 
 
+    void createMats();
+    
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
@@ -101,11 +106,16 @@ private:
     QButtonGroup* myButtonGroup;
     QCheckBox* myCheckBox1;
     QSpinBox* mySpinBox1;
-
+    std::vector<glm::vec4> amb;
+    std::vector<glm::vec4> def;
+    std::vector<glm::vec4> spec;
+    std::vector<float>scala;
+     QComboBox* combo_box_objekt;
 
 private slots:
 
 
+    void selectObjectMaterial();
 
     /* slots to catch events directly from renderer */
     void mouseEvent(QMouseEvent* event);

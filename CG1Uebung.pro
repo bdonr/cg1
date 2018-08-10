@@ -22,7 +22,9 @@ SOURCES += main.cpp \
     CgClasses/CgAppearance.cpp \
     CgClasses/CgDrawobject.cpp \
     CgEvents/Lightevent.cpp \
-    CgUtils/CgUtils.cpp
+    CgUtils/CgUtils.cpp \
+    CgClasses/lightsource.cpp \
+    CgEvents/materialchangeevent.cpp
 
 HEADERS += \
     CgQtViewer/CgQtGLRenderWidget.h \
@@ -53,5 +55,7 @@ HEADERS += \
     CgClasses/CgAppearance.h \
     CgClasses/CgDrawobject.h \
     CgEvents/Lightevent.h \
-    CgUtils/CgUtils.h
+    CgUtils/CgUtils.h \
+    CgClasses/lightsource.h \
+    CgEvents/materialchangeevent.h
 

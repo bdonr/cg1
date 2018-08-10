@@ -15,25 +15,16 @@
 CgSceneControl::CgSceneControl()
 {
     m_triangle=NULL;
-     m_current_transformation=glm::mat4(1.);
-      m_lookAt_matrix= glm::lookAt(glm::vec3(0.0,0.0,1.0),glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0));
-     m_proj_matrix= glm::mat4x4(glm::vec4(1.792591, 0.0, 0.0, 0.0), glm::vec4(0.0, 1.792591, 0.0, 0.0), glm::vec4(0.0, 0.0, -1.0002, -1.0), glm::vec4(0.0, 0.0, -0.020002, 0.0));
-   m_trackball_rotation=glm::mat4(1.);
-   m_triangle = new CgExampleTriangle();
+    lightsource=NULL;
+    m_current_transformation=glm::mat4(1.0);
+    m_lookAt_matrix= glm::lookAt(glm::vec3(0.0,0.0,1.0),glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0));
+    m_proj_matrix= glm::mat4x4(glm::vec4(1.792591, 0.0, 0.0, 0.0), glm::vec4(0.0, 1.792591, 0.0, 0.0), glm::vec4(0.0, 0.0, -1.0002, -1.0), glm::vec4(0.0, 0.0, -0.020002, 0.0));
+    m_trackball_rotation=glm::mat4(1.);
 
-   //.33 .22 .03 1.0 A
-       // .78 .57 .11 1.0 D
-       // .99 .94 .81 1.0 Sa
-       // 27.9 S
-   CgAppearance *x = new CgAppearance();
-   x->setAmbiente(glm::vec4(1.0,1.0,1.0,0));
-   x->setColor(glm::vec4(0,0,1.0,0));
-   x->setAmbiente(glm::vec4(.33,.22,.03,1.0));
-   x->setDiffuse(glm::vec4(.99,.94,.81,1.0));
-   x->setSpecular(glm::vec4(.99,.94,.81,1.0));
-
-   m_triangle->setAppearance(x);
-
+    //.33 .22 .03 1.0 A
+    // .78 .57 .11 1.0 D
+    // .99 .94 .81 1.0 Sa
+    // 27.9 S
 
 }
 
@@ -63,53 +54,100 @@ void CgSceneControl::createbunny()
     std::vector<glm::vec3> pos;
     loader->getPositionData(pos);
 
-     std::vector<glm::vec3> norm;
-     loader->getNormalData(norm);
+    std::vector<glm::vec3> norm;
+    loader->getNormalData(norm);
 
-      std::vector<unsigned int> indx;
-      loader->getFaceIndexData(indx);
+    std::vector<unsigned int> indx;
+    loader->getFaceIndexData(indx);
 
     m_triangle->init(pos,norm,indx);
     m_renderer->init(m_triangle);
     m_renderer->render(m_triangle);
 }
 
+LightSource *CgSceneControl::getLightsource() const
+{
+    return lightsource;
+}
+
+void CgSceneControl::setLightsource(LightSource *value)
+{
+    lightsource = value;
+}
+
+void CgSceneControl::setMaterialEigenschaften()
+{
+    m_renderer->setUniformValue("scalar",m_triangle->getScalar());
+    m_renderer->setUniformValue("matDiffuseColor",m_triangle->getAppearance()->getDiffuse());
+    m_renderer->setUniformValue("matAmbientColor",m_triangle->getAppearance()->getAmbiente());
+    m_renderer->setUniformValue("matSpecularColor",m_triangle->getAppearance()->getMaterial());
+}
+
+void CgSceneControl::setLightEigenschaften()
+{
+    m_renderer->setUniformValue("lightDiffuseColor",lightsource->getAppearance()->getDiffuse());
+    m_renderer->setUniformValue("lightAmbientColor",lightsource->getAppearance()->getAmbiente());
+    m_renderer->setUniformValue("lightSpecularColor",lightsource->getAppearance()->getMaterial());
+    m_renderer->setUniformValue("lightdirection",lightsource->getDirection());
+}
+
 void CgSceneControl::renderObjects()
 {
+    if(!lightsource){
+        CgAppearance *x = new CgAppearance();
+        x->setAmbiente(glm::vec4(1.));
+        x->setDiffuse(glm::vec4(1.));
+        x->setMaterial(glm::vec4(1.));
+        lightsource = new LightSource(x);
+        lightsource->setDirection(glm::vec3(1.,1.8,-1.0));
 
+
+    }
+    if(lightsource){
+        setLightEigenschaften();
+    }
+    if(!m_triangle){
+        m_triangle = new CgExampleTriangle();
+        createbunny();
+        CgAppearance *x = new CgAppearance();
+        x->setAmbiente(glm::vec4(.2,.2,.2,0));
+        x->setDiffuse(glm::vec4(.1,.1,.1,1.0));
+        x->setSpecular(glm::vec4(.5,.5,.5,1.0));
+        m_triangle->setAppearance(x);
+        m_triangle->setScalar(10.0);
+        m_current_transformation*glm::vec4(0.1);
+    }
+    if(m_triangle)  {
+        setMaterialEigenschaften();
+    }
     // Materialeigenschaften setzen
     // sollte ja eigentlich pro Objekt unterschiedlich sein können, naja bekommen sie schon hin....
 
     m_renderer->setUniformValue("mycolor",m_triangle->getAppearance()->getColor());
 
-//.33 .22 .03 1.0 A
+    //.33 .22 .03 1.0 A
     // .78 .57 .11 1.0 D
     // .99 .94 .81 1.0 Sa
     // 27.9 S
-    m_renderer->setUniformValue("matDiffuseColor",glm::vec4(0.35,0.31,0.09,1.0));
-    m_renderer->setUniformValue("lightDiffuseColor",glm::vec4(1.0,1.0,1.0,1.0));
 
-    m_renderer->setUniformValue("matAmbientColor",glm::vec4(0.25,0.22,0.06,1.0));
-    m_renderer->setUniformValue("lightAmbientColor",glm::vec4(1.0,1.0,1.0,1.0));
-
-    m_renderer->setUniformValue("matSpecularColor",glm::vec4(0.8,0.72,0.21,1.0));
-    m_renderer->setUniformValue("lightSpecularColor",glm::vec4(1.0,1.0,1.0,1.0));
+    //TODO lightsource
 
 
 
 
 
-    glm::mat4 mv_matrix = m_lookAt_matrix * m_trackball_rotation* m_current_transformation ;
+    glm::mat4 scale = glm::scale(m_current_transformation,glm::vec3(.2));
+
+    glm::mat4 mv_matrix = m_lookAt_matrix * m_trackball_rotation* m_current_transformation*scale ;
     glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(mv_matrix)));
 
     m_renderer->setUniformValue("projMatrix",m_proj_matrix);
     m_renderer->setUniformValue("modelviewMatrix",mv_matrix);
     m_renderer->setUniformValue("normalMatrix",normal_matrix);
-    createbunny();
-   /* if(m_triangle!=NULL){
+    m_renderer->setUniformValue("viewpos",glm::vec3(0,0,-4));
     m_renderer->init(m_triangle);
     m_renderer->render(m_triangle);
-    }*/
+
 
 }
 
@@ -124,7 +162,7 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
         CgMouseEvent* ev = (CgMouseEvent*)e;
         //std::cout << *ev << std::endl;
 
-         // hier kommt jetzt die Abarbeitung des Events hin...
+        // hier kommt jetzt die Abarbeitung des Events hin...
     }
 
 
@@ -167,11 +205,21 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
 
     if(e->getType() & Cg::WindowResizeEvent)
     {
-         CgWindowResizeEvent* ev = (CgWindowResizeEvent*)e;
-         std::cout << *ev <<std::endl;
-         m_proj_matrix=glm::perspective(45.0f, (float)(ev->w()) / ev->h(), 0.01f, 100.0f);
+        CgWindowResizeEvent* ev = (CgWindowResizeEvent*)e;
+        std::cout << *ev <<std::endl;
+        m_proj_matrix=glm::perspective(45.0f, (float)(ev->w()) / ev->h(), 0.01f, 100.0f);
     }
 
+    /**
+      * bekommt Event vom Typ CgChangeMaterial und ändert dementsprechend das Material
+    **/
+    if(e->getType() & Cg::EventType::CgChangeMaterial){
+        this->m_triangle->getAppearance()->setAmbiente(((MaterialChangeEvent*)e)->getAmb());
+        this->m_triangle->getAppearance()->setDiffuse(((MaterialChangeEvent*)e)->getDiffuse());
+        this->m_triangle->getAppearance()->setMaterial(((MaterialChangeEvent*)e)->getMat());
+        this->m_triangle->setScalar(((MaterialChangeEvent*)e)->getScalar());
+        m_renderer->redraw();
+    }
     if(e->getType() & Cg::LoadObjFileEvent)
     {
 
@@ -186,11 +234,11 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
         std::vector<glm::vec3> pos;
         loader->getPositionData(pos);
 
-         std::vector<glm::vec3> norm;
-         loader->getNormalData(norm);
+        std::vector<glm::vec3> norm;
+        loader->getNormalData(norm);
 
-          std::vector<unsigned int> indx;
-          loader->getFaceIndexData(indx);
+        std::vector<unsigned int> indx;
+        loader->getFaceIndexData(indx);
 
 
 

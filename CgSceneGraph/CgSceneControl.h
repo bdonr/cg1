@@ -4,7 +4,8 @@
 #include "CgBase/CgObserver.h"
 #include "CgBase/CgBaseSceneControl.h"
 #include <glm/glm.hpp>
-
+#include "CgClasses/lightsource.h"
+#include "CgEvents/materialchangeevent.h"
 class CgBaseEvent;
 class CgBaseRenderer;
 class CgExampleTriangle;
@@ -21,6 +22,13 @@ public:
 
     void createbunny();
 
+    LightSource *getLightsource() const;
+    void setLightsource(LightSource *value);
+
+    void setMaterialEigenschaften();
+
+    void setLightEigenschaften();
+
 private:
 
     CgBaseRenderer* m_renderer;
@@ -30,6 +38,7 @@ private:
     glm::mat4 m_trackball_rotation;
     glm::mat4 m_lookAt_matrix;
     glm::mat4 m_proj_matrix;
+    LightSource * lightsource;
 
 };
 

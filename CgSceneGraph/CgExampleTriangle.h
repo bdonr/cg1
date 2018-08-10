@@ -41,6 +41,9 @@ public:
     std::map<int, std::vector<glm::vec3> *> getMap_vertex_normals() const;
     void setMap_vertex_normals(const std::map<int, std::vector<glm::vec3> *> &value);
 
+    float getScalar() const;
+    void setScalar(float value);
+
 private:
 
     std::vector<glm::vec3> m_vertices;
@@ -53,7 +56,7 @@ private:
 
     std::vector<glm::vec3> m_face_normals;
     std::vector<glm::vec3> m_face_colors;
-
+    float scalar;
     const Cg::ObjectType m_type;
     const unsigned int m_id;
     CgAppearance *appearance;

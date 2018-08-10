@@ -176,4 +176,14 @@ void CgExampleTriangle::setMap_vertex_normals(const std::map<int, std::vector<gl
     map_vertex_normals = value;
 }
 
+float CgExampleTriangle::getScalar() const
+{
+    return scalar;
+}
+
+void CgExampleTriangle::setScalar(float value)
+{
+    scalar = value;
+}
+
 
