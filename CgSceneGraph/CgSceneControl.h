@@ -29,6 +29,14 @@ public:
 
     void setLightEigenschaften();
 
+    void drawTriangle();
+    
+    void setTriangle();
+    
+    void setLightSource();
+    
+    void createLightSource();
+    
 private:
 
     CgBaseRenderer* m_renderer;

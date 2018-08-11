@@ -39,8 +39,6 @@ void CgSceneControl::setRenderer(CgBaseRenderer* r)
 {
     m_renderer=r;
     m_renderer->setSceneControl(this);
-
-
 }
 
 
@@ -91,50 +89,59 @@ void CgSceneControl::setLightEigenschaften()
     m_renderer->setUniformValue("lightdirection",lightsource->getDirection());
 }
 
-void CgSceneControl::renderObjects()
+void CgSceneControl::setTriangle()
+{
+    m_triangle = new CgExampleTriangle();
+    createbunny();
+    CgAppearance *x = new CgAppearance();
+    x->setAmbiente(glm::vec4(.2,.2,.2,0));
+    x->setDiffuse(glm::vec4(.1,.1,.1,1.0));
+    x->setMaterial(glm::vec4(.5,.5,.5,1.0));
+    m_triangle->setAppearance(x);
+    m_triangle->setScalar(10.0);
+    m_current_transformation*glm::vec4(0.1);
+}
+
+void CgSceneControl::drawTriangle()
+{
+    if(!m_triangle){
+        setTriangle();
+    }
+    if(m_triangle)  {
+        setMaterialEigenschaften();
+    }
+}
+
+void CgSceneControl::createLightSource()
+{
+    CgAppearance *x = new CgAppearance();
+    x->setAmbiente(glm::vec4(.2));
+    x->setDiffuse(glm::vec4(1,1,1,1));
+    x->setMaterial(glm::vec4(1.,1.,1.,.1));
+    lightsource = new LightSource(x);
+    lightsource->setDirection(glm::vec3(1.,1.,3.));
+}
+
+void CgSceneControl::setLightSource()
 {
     if(!lightsource){
-        CgAppearance *x = new CgAppearance();
-        x->setAmbiente(glm::vec4(1.));
-        x->setDiffuse(glm::vec4(1.));
-        x->setMaterial(glm::vec4(1.));
-        lightsource = new LightSource(x);
-        lightsource->setDirection(glm::vec3(1.,1.8,-1.0));
+        createLightSource();
 
 
     }
     if(lightsource){
         setLightEigenschaften();
     }
-    if(!m_triangle){
-        m_triangle = new CgExampleTriangle();
-        createbunny();
-        CgAppearance *x = new CgAppearance();
-        x->setAmbiente(glm::vec4(.2,.2,.2,0));
-        x->setDiffuse(glm::vec4(.1,.1,.1,1.0));
-        x->setSpecular(glm::vec4(.5,.5,.5,1.0));
-        m_triangle->setAppearance(x);
-        m_triangle->setScalar(10.0);
-        m_current_transformation*glm::vec4(0.1);
-    }
-    if(m_triangle)  {
-        setMaterialEigenschaften();
-    }
+}
+
+void CgSceneControl::renderObjects()
+{
+    setLightSource();
+    drawTriangle();
     // Materialeigenschaften setzen
     // sollte ja eigentlich pro Objekt unterschiedlich sein können, naja bekommen sie schon hin....
 
     m_renderer->setUniformValue("mycolor",m_triangle->getAppearance()->getColor());
-
-    //.33 .22 .03 1.0 A
-    // .78 .57 .11 1.0 D
-    // .99 .94 .81 1.0 Sa
-    // 27.9 S
-
-    //TODO lightsource
-
-
-
-
 
     glm::mat4 scale = glm::scale(m_current_transformation,glm::vec3(.2));
 
@@ -144,7 +151,7 @@ void CgSceneControl::renderObjects()
     m_renderer->setUniformValue("projMatrix",m_proj_matrix);
     m_renderer->setUniformValue("modelviewMatrix",mv_matrix);
     m_renderer->setUniformValue("normalMatrix",normal_matrix);
-    m_renderer->setUniformValue("viewpos",glm::vec3(0,0,-4));
+    m_renderer->setUniformValue("viewpos",glm::vec3(0,0,-1));
     m_renderer->init(m_triangle);
     m_renderer->render(m_triangle);
 
@@ -169,11 +176,8 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
     if(e->getType() & Cg::CgTrackballEvent)
     {
         CgTrackballEvent* ev = (CgTrackballEvent*)e;
-
-
         m_trackball_rotation=ev->getRotationMatrix();
         m_renderer->redraw();
-
     }
 
 
@@ -217,6 +221,7 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
         this->m_triangle->getAppearance()->setAmbiente(((MaterialChangeEvent*)e)->getAmb());
         this->m_triangle->getAppearance()->setDiffuse(((MaterialChangeEvent*)e)->getDiffuse());
         this->m_triangle->getAppearance()->setMaterial(((MaterialChangeEvent*)e)->getMat());
+        std::cout<<((MaterialChangeEvent*)e)->getScalar()<<std::endl;
         this->m_triangle->setScalar(((MaterialChangeEvent*)e)->getScalar());
         m_renderer->redraw();
     }
