@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include "CgClasses/lightsource.h"
 #include "CgEvents/materialchangeevent.h"
+#include "CgEvents/BoxChangedEvent.h"
 class CgBaseEvent;
 class CgBaseRenderer;
 class CgExampleTriangle;
@@ -37,6 +38,8 @@ public:
     
     void createLightSource();
     
+    void checkValueOfEvent(CgBaseEvent* e);
+
 private:
 
     CgBaseRenderer* m_renderer;
@@ -47,6 +50,7 @@ private:
     glm::mat4 m_lookAt_matrix;
     glm::mat4 m_proj_matrix;
     LightSource * lightsource;
+    bool shadingon;
 
 };
 

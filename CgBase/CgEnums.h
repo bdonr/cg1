@@ -27,12 +27,11 @@ namespace Cg{
     CgTrackballEvent                = 0x0000400,
 
     // unused, may be changed to whatever
-    CgSomeSpecialEvent1             = 0x0001000,
-    CgSomeSpecialEvent2             = 0x0002000,
-    CgSomeSpecialEvent3             = 0x0004000,
-    CgSomeSpecialEvent4             = 0x0008000,
-    CgEventGroup1                   = 0x000f000,
-    CgChangeMaterial               = 0x000e000
+    CgChangeMaterial             = 0x0001000,
+    CgChangeInterpolation             = 0x0002000,
+    CgChangeShader             = 0x0004000,
+    CgChangeColor             = 0x0008000,
+    CgEventGroup1                   = 0x000f000
     // feel free to add whatever you like
     }EventType;
 

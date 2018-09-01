@@ -176,14 +176,15 @@ void CgExampleTriangle::setMap_vertex_normals(const std::map<int, std::vector<gl
     map_vertex_normals = value;
 }
 
-float CgExampleTriangle::getScalar() const
+float CgExampleTriangle::getShininess() const
 {
-    return scalar;
+    return shininess;
 }
 
-void CgExampleTriangle::setScalar(float value)
+void CgExampleTriangle::setShininess(float value)
 {
-    scalar = value;
+    shininess = value;
 }
+
 
 

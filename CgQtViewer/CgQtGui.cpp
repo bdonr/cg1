@@ -30,6 +30,11 @@
 #include <iostream>
 
 
+/**
+ * Erstelle Materialien , die in der Combobox für Materialen
+ * angezeigt werden
+ * @brief CgQtGui::createMats
+ */
 
 void CgQtGui::createMats()
 {
@@ -47,16 +52,23 @@ void CgQtGui::createMats()
     def.push_back(glm::vec4(0.18f,0.17f,0.23f,0.8f));
     spec.push_back(glm::vec4(0.33f,0.33f,0.35f,0.8f));
     scala.push_back(38.4);
+    //gold
 
-    amb.push_back(glm::vec4(0.14f,0.22f,0.16f,0.9f));
-    def.push_back(glm::vec4(0.54f,0.89f,0.63f,0.9f));
-    spec.push_back(glm::vec4(0.32f,0.32f,0.32f,0.9f));
-    scala.push_back(12.8);
 
-    amb.push_back(glm::vec4(0.25f,0.22f,0.6f,1.0f));
-    def.push_back(glm::vec4(0.35f,0.31f,0.9f,1.0f));
-    spec.push_back(glm::vec4(0.8f,0.72f,0.21f,1.0f));
-    scala.push_back(83.2);
+    amb.push_back(glm::vec4(0.25f,0.20f,0.07f,1.f));
+    def.push_back(glm::vec4(0.75f,0.61f,0.23f,1.f));
+    spec.push_back(glm::vec4(0.63f,0.56f,0.37f,0.9f));
+    scala.push_back(51.2);
+
+    amb.push_back(glm::vec4(0.19f,0.19f,0.19f,1.0f));
+    def.push_back(glm::vec4(0.51f,0.51f,0.51f,1.0f));
+    spec.push_back(glm::vec4(0.51f,0.51f,0.51f,1.f));
+    scala.push_back(51.2);
+
+    amb.push_back(glm::vec4(0.2f,0.2f,0.2f,1.0f));
+    def.push_back(glm::vec4(0.1f,0.1f,0.1f,1.0f));
+    spec.push_back(glm::vec4(0.5f,0.5f,0.5f,1.f));
+    scala.push_back(51.2);
 }
 
 CgQtGui::CgQtGui(CgQtMainApplication *mw)
@@ -161,33 +173,135 @@ QSlider *CgQtGui::createSlider()
 
 
 
+/**
+ * Auswahl ändern wenn Shader on sind
+ * @brief CgQtGui::selectMaterialShaderOn
+ * @param names
+ */
 
+void CgQtGui::selectMaterialShaderOn()
+{
+    names.clear();
+    names.push_back("Chrom");
+    names.push_back("Perle");
+    names.push_back("Obsidian");
+    names.push_back("Gold");
+    names.push_back("Silber");
+    names.push_back("Plastik");
+}
 
+/**
+ * Auswahl ändern, wenn Shader off sind
+ * @brief CgQtGui::selectMaterialShaderOff
+ * @param names
+ */
+void CgQtGui::selectMaterialShaderOff()
+{
+    names.clear();
+    names.push_back("Rot");
+    names.push_back("Gruen");
+    names.push_back("Blau");
+}
+
+/**
+ * Auswahl an Shadern
+ * @brief CgQtGui::selectShader
+ * @param names
+ */
+void CgQtGui::selectShader()
+{
+    names.clear();
+    names.push_back("none");
+    names.push_back("Phong");
+    names.push_back("Gouraud");
+}
+/**
+ * Auswahl an Interpolationsmöglichkeiten
+ * @brief CgQtGui::selectInterpolation
+ * @param names
+ */
+void CgQtGui::selectInterpolation()
+{
+    names.clear();
+    names.push_back("none");
+    names.push_back("flat");
+    names.push_back("smooth");
+}
+
+/**
+ * Erstelle Tab 6
+ * @brief CgQtGui::Aufgabe6
+ * @param parent
+ */
 void CgQtGui::Aufgabe6(QWidget* parent)
 {
     QVBoxLayout *tab1_control = new QVBoxLayout();
     QLabel * opt = new QLabel("selektiere eine Objekteigenschaft");
-    combo_box_objekt = new QComboBox();
-    combo_box_objekt->addItem("Chrom");
-    combo_box_objekt->addItem("Perle");
-    combo_box_objekt->addItem("Obsidian");
-    combo_box_objekt->addItem("Gold");
-    combo_box_objekt->addItem("Kupfer");
-    tab1_control->addWidget(combo_box_objekt);
+    combo_box_shader = new QComboBox();
+    combo_box_interpolation = new QComboBox();
+    combo_box_material = new QComboBox();
+    selectMaterialShaderOff();
+    createComboBox(combo_box_material);
+    selectShader();
+    createComboBox(combo_box_shader);
+    selectInterpolation();
+    createComboBox(combo_box_interpolation);
+
+    tab1_control->addWidget(combo_box_material);
+    tab1_control->addWidget(combo_box_shader);
+    tab1_control->addWidget(combo_box_interpolation);
     tab1_control->addWidget(opt);
-    connect(combo_box_objekt, SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectMaterial()));
+
+    connect(combo_box_material, SIGNAL(currentIndexChanged(int)),this,SLOT(selectColor()));
+    connect(combo_box_shader, SIGNAL(currentIndexChanged(int)),this,SLOT(selectShaderSlot()));
+    connect(combo_box_interpolation, SIGNAL(currentIndexChanged(int)),this,SLOT(selectInterpolationSlot()));
     parent->setLayout(tab1_control);
 
 }
+/**
+ * Erstelle Inhalt der Comboboxen
+ * @brief CgQtGui::createComboBox
+ * @param names
+ * @param combo
+ */
+void CgQtGui::createComboBox(QComboBox* combo){
+    for(int i =0; i<names.size(); i++){
+        combo->addItem(names.at(i));
+    }
+}
 
+/**
+ * Löschen Inhalt der Combobox
+ * @brief CgQtGui::clearComboBox
+ * @param combo
+ */
+void CgQtGui::clearComboBox(QComboBox* combo){
+    combo->clear();
+}
+
+/**
+ * Slot um Material auszuwählen
+ * @brief CgQtGui::selectObjectMaterial
+ */
 void CgQtGui::selectObjectMaterial()
 {
-    MaterialChangeEvent * materialChangeEvent = new MaterialChangeEvent();
-    materialChangeEvent->setAmb(amb.at(combo_box_objekt->currentIndex()));
-    materialChangeEvent->setDiffuse(def.at(combo_box_objekt->currentIndex()));
-    materialChangeEvent->setScalar(scala.at(combo_box_objekt->currentIndex()));
-    materialChangeEvent->setMat(spec.at(combo_box_objekt->currentIndex()));
-    notifyObserver(materialChangeEvent);
+    if(combo_box_material->currentIndex()!=-1){
+        MaterialChangeEvent * materialChangeEvent = new MaterialChangeEvent();
+        materialChangeEvent->setAmb(amb.at(combo_box_material->currentIndex()));
+        materialChangeEvent->setDiffuse(def.at(combo_box_material->currentIndex()));
+        materialChangeEvent->setScalar(scala.at(combo_box_material->currentIndex()));
+        materialChangeEvent->setMat(spec.at(combo_box_material->currentIndex()));
+        notifyObserver(materialChangeEvent);
+    }
+}
+
+/**
+ * Slot um Farbe auszuwählen
+ * @brief CgQtGui::selectColor
+ */
+void CgQtGui::selectColor()
+{
+    notifyObserver(new BoxChangedEvent(Cg::EventType::CgChangeColor,combo_box_material->currentIndex()));
 }
 
 
@@ -209,15 +323,51 @@ void CgQtGui::slotMyCheckBox1Changed()
 
 void CgQtGui::slotLoadMeshFile()
 {
-
-
-
-   QString file=  QFileDialog::getOpenFileName(this, tr("Open Obj-File"),"",tr("Model Files (*.obj)"));
-
-
+    QString file=  QFileDialog::getOpenFileName(this, tr("Open Obj-File"),"",tr("Model Files (*.obj)"));
     CgBaseEvent* e = new CgLoadObjFileEvent(Cg::LoadObjFileEvent, file.toStdString());
     std::cout<<file.toStdString()<<std::endl;
     notifyObserver(e);
+}
+
+void CgQtGui::clearBoxes()
+{
+    clearComboBox(combo_box_material);
+    clearComboBox(combo_box_interpolation);
+    clearComboBox(combo_box_shader);
+}
+
+/**
+ * wenn combo_box_shader index == 0 dann ist farbe off und nun kann die farbe des objects gewählt werden
+ * @brief CgQtGui::selectShaderSlot
+ */
+void CgQtGui::selectShaderSlot()
+{
+
+    selectShader();
+    combo_box_material->clear();
+    if(combo_box_shader->currentIndex()==0){
+        disconnect(combo_box_material, SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectMaterial()));
+        connect(combo_box_material, SIGNAL(currentIndexChanged(int)),this,SLOT(selectColor()));
+        selectMaterialShaderOff();
+
+    }
+    else{
+        disconnect(combo_box_material, SIGNAL(currentIndexChanged(int)),this,SLOT(selectColor()));
+        connect(combo_box_material, SIGNAL(currentIndexChanged(int)),this,SLOT(selectObjectMaterial()));
+        notifyObserver(new BoxChangedEvent(Cg::EventType::CgChangeShader, combo_box_shader->currentIndex()));
+        selectMaterialShaderOn();
+
+    }
+    createComboBox(combo_box_material);
+
+
+
+}
+
+void CgQtGui::selectInterpolationSlot()
+{
+    std::cout<<combo_box_interpolation->currentIndex()<<std::endl;
+    notifyObserver(new BoxChangedEvent(Cg::EventType::CgChangeInterpolation , combo_box_interpolation->currentIndex()));
 }
 
 
@@ -229,21 +379,21 @@ void CgQtGui::slotTrackballChanged()
 
 void CgQtGui::slotMyButton1Pressed()
 {
-   std::cout << "button 1 pressed " << std::endl;
+    std::cout << "button 1 pressed " << std::endl;
 }
 
 
 void CgQtGui::mouseEvent(QMouseEvent* event)
 {
 
-   // std::cout << QApplication::keyboardModifiers() << std::endl;
+    // std::cout << QApplication::keyboardModifiers() << std::endl;
 
-  //  if(QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)==true)
+    //  if(QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)==true)
     //    std::cout << Cg::ControlModifier << endl;
 
 
-   if(event->type()==QEvent::MouseButtonPress)
-   {
+    if(event->type()==QEvent::MouseButtonPress)
+    {
 
 
         CgBaseEvent* e = new CgMouseEvent(Cg::CgMouseButtonPress,
@@ -251,15 +401,15 @@ void CgQtGui::mouseEvent(QMouseEvent* event)
                                           (Cg::MouseButtons)event->button());
 
         notifyObserver(e);
-   }
+    }
 
-   if(event->type()==QEvent::MouseMove)
-   {
-       CgBaseEvent* e= new CgMouseEvent(Cg::CgMouseMove,
-                                        glm::vec2(event->localPos().x() ,event->localPos().y()),
-                                        (Cg::MouseButtons)event->button());
-       notifyObserver(e);
-   }
+    if(event->type()==QEvent::MouseMove)
+    {
+        CgBaseEvent* e= new CgMouseEvent(Cg::CgMouseMove,
+                                         glm::vec2(event->localPos().x() ,event->localPos().y()),
+                                         (Cg::MouseButtons)event->button());
+        notifyObserver(e);
+    }
 
 
 
@@ -267,15 +417,15 @@ void CgQtGui::mouseEvent(QMouseEvent* event)
 
 void CgQtGui::keyPressEvent(QKeyEvent *event)
 {
-   CgBaseEvent* e= new CgKeyEvent(Cg::CgKeyPressEvent,(Cg::Key)event->key(),(Cg::KeyboardModifiers)event->nativeModifiers(),event->text().toStdString());
-   notifyObserver(e);
+    CgBaseEvent* e= new CgKeyEvent(Cg::CgKeyPressEvent,(Cg::Key)event->key(),(Cg::KeyboardModifiers)event->nativeModifiers(),event->text().toStdString());
+    notifyObserver(e);
 }
 
 
 void CgQtGui::viewportChanged(int w, int h)
 {
-     CgBaseEvent* e = new CgWindowResizeEvent(Cg::WindowResizeEvent,w,h);
-     notifyObserver(e);
+    CgBaseEvent* e = new CgWindowResizeEvent(Cg::WindowResizeEvent,w,h);
+    notifyObserver(e);
 }
 
 

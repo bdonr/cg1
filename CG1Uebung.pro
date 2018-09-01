@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     CgEvents/Lightevent.cpp \
     CgUtils/CgUtils.cpp \
     CgClasses/lightsource.cpp \
-    CgEvents/materialchangeevent.cpp
+    CgEvents/interpolationchanged.cpp \
+    CgEvents/BoxChangedEvent.cpp
 
 HEADERS += \
     CgQtViewer/CgQtGLRenderWidget.h \
@@ -57,5 +58,6 @@ HEADERS += \
     CgEvents/Lightevent.h \
     CgUtils/CgUtils.h \
     CgClasses/lightsource.h \
-    CgEvents/materialchangeevent.h
+    CgEvents/materialchangeevent.h \
+    CgEvents/BoxChangedEvent.h
 

@@ -1,14 +1,5 @@
 #include "CgAppearance.h"
 
-glm::vec4 CgAppearance::getSpecular() const
-{
-    return specular;
-}
-
-void CgAppearance::setSpecular(const glm::vec4 &value)
-{
-    specular = value;
-}
 
 glm::vec4 CgAppearance::getDiffuse() const
 {

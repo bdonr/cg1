@@ -16,6 +16,7 @@ CgSceneControl::CgSceneControl()
 {
     m_triangle=NULL;
     lightsource=NULL;
+    shadingon=true;
     m_current_transformation=glm::mat4(1.0);
     m_lookAt_matrix= glm::lookAt(glm::vec3(0.0,0.0,1.0),glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0));
     m_proj_matrix= glm::mat4x4(glm::vec4(1.792591, 0.0, 0.0, 0.0), glm::vec4(0.0, 1.792591, 0.0, 0.0), glm::vec4(0.0, 0.0, -1.0002, -1.0), glm::vec4(0.0, 0.0, -0.020002, 0.0));
@@ -75,18 +76,24 @@ void CgSceneControl::setLightsource(LightSource *value)
 
 void CgSceneControl::setMaterialEigenschaften()
 {
-    m_renderer->setUniformValue("scalar",m_triangle->getScalar());
-    m_renderer->setUniformValue("matDiffuseColor",m_triangle->getAppearance()->getDiffuse());
-    m_renderer->setUniformValue("matAmbientColor",m_triangle->getAppearance()->getAmbiente());
-    m_renderer->setUniformValue("matSpecularColor",m_triangle->getAppearance()->getMaterial());
+    if(shadingon){
+        m_renderer->setUniformValue("shininess",m_triangle->getShininess());
+        m_renderer->setUniformValue("matDiffuseColor",m_triangle->getAppearance()->getDiffuse());
+        m_renderer->setUniformValue("matAmbientColor",m_triangle->getAppearance()->getAmbiente());
+        m_renderer->setUniformValue("matSpecularColor",m_triangle->getAppearance()->getMaterial());
+    }
+    else{
+        std::cout<<"nmormal"<<std::endl;
+        m_renderer->setUniformValue("color",m_triangle->getAppearance()->getColor());
+    }
 }
-
 void CgSceneControl::setLightEigenschaften()
 {
     m_renderer->setUniformValue("lightDiffuseColor",lightsource->getAppearance()->getDiffuse());
     m_renderer->setUniformValue("lightAmbientColor",lightsource->getAppearance()->getAmbiente());
     m_renderer->setUniformValue("lightSpecularColor",lightsource->getAppearance()->getMaterial());
     m_renderer->setUniformValue("lightdirection",lightsource->getDirection());
+
 }
 
 void CgSceneControl::setTriangle()
@@ -94,11 +101,9 @@ void CgSceneControl::setTriangle()
     m_triangle = new CgExampleTriangle();
     createbunny();
     CgAppearance *x = new CgAppearance();
-    x->setAmbiente(glm::vec4(.2,.2,.2,0));
-    x->setDiffuse(glm::vec4(.1,.1,.1,1.0));
-    x->setMaterial(glm::vec4(.5,.5,.5,1.0));
+    x->setColor(glm::vec4(0.,1.0,0,1.));
     m_triangle->setAppearance(x);
-    m_triangle->setScalar(10.0);
+    m_triangle->setShininess(10.0);
     m_current_transformation*glm::vec4(0.1);
 }
 
@@ -126,8 +131,6 @@ void CgSceneControl::setLightSource()
 {
     if(!lightsource){
         createLightSource();
-
-
     }
     if(lightsource){
         setLightEigenschaften();
@@ -136,12 +139,21 @@ void CgSceneControl::setLightSource()
 
 void CgSceneControl::renderObjects()
 {
+    if(shadingon){
+        std::cout<<"shading an"<<std::endl;
+        m_renderer->setShaderSourceFiles("../Sommer2018/CgShader/phong.vert","../Sommer2018/CgShader/phong.frag");
+    }
+    else{
+        std::cout<<"shading aus"<<std::endl;
+        m_renderer->setShaderSourceFiles("../Sommer2018/CgShader/simple.vert","../Sommer2018/CgShader/simple.frag");
+        m_renderer->setUniformValue("color",m_triangle->getAppearance()->getColor());
+    }
     setLightSource();
     drawTriangle();
     // Materialeigenschaften setzen
     // sollte ja eigentlich pro Objekt unterschiedlich sein können, naja bekommen sie schon hin....
 
-    m_renderer->setUniformValue("mycolor",m_triangle->getAppearance()->getColor());
+
 
     glm::mat4 scale = glm::scale(m_current_transformation,glm::vec3(.2));
 
@@ -152,6 +164,7 @@ void CgSceneControl::renderObjects()
     m_renderer->setUniformValue("modelviewMatrix",mv_matrix);
     m_renderer->setUniformValue("normalMatrix",normal_matrix);
     m_renderer->setUniformValue("viewpos",glm::vec3(0,0,-1));
+
     m_renderer->init(m_triangle);
     m_renderer->render(m_triangle);
 
@@ -159,6 +172,14 @@ void CgSceneControl::renderObjects()
 }
 
 
+
+void CgSceneControl::checkValueOfEvent(CgBaseEvent* e)
+{
+    shadingon=true;
+    if( ((BoxChangedEvent*)e)->getSelected()==0){
+        shadingon=false;
+    }
+}
 
 void CgSceneControl::handleEvent(CgBaseEvent* e)
 {
@@ -218,11 +239,25 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
       * bekommt Event vom Typ CgChangeMaterial und ändert dementsprechend das Material
     **/
     if(e->getType() & Cg::EventType::CgChangeMaterial){
-        this->m_triangle->getAppearance()->setAmbiente(((MaterialChangeEvent*)e)->getAmb());
-        this->m_triangle->getAppearance()->setDiffuse(((MaterialChangeEvent*)e)->getDiffuse());
-        this->m_triangle->getAppearance()->setMaterial(((MaterialChangeEvent*)e)->getMat());
-        std::cout<<((MaterialChangeEvent*)e)->getScalar()<<std::endl;
-        this->m_triangle->setScalar(((MaterialChangeEvent*)e)->getScalar());
+        if(shadingon){
+            this->m_triangle->getAppearance()->setAmbiente(((MaterialChangeEvent*)e)->getAmb());
+            this->m_triangle->getAppearance()->setDiffuse(((MaterialChangeEvent*)e)->getDiffuse());
+            this->m_triangle->getAppearance()->setMaterial(((MaterialChangeEvent*)e)->getMat());
+            std::cout<<((MaterialChangeEvent*)e)->getScalar()<<std::endl;
+            this->m_triangle->setShininess(((MaterialChangeEvent*)e)->getScalar());
+            m_renderer->redraw();
+
+        }
+    }
+
+    if(e->getType() & Cg::EventType::CgChangeShader){
+        checkValueOfEvent(e);
+        m_renderer->redraw();
+
+    }
+
+    if(e->getType() & Cg::EventType::CgChangeInterpolation){
+        checkValueOfEvent(e);
         m_renderer->redraw();
     }
     if(e->getType() & Cg::LoadObjFileEvent)

@@ -46,6 +46,7 @@
 #include <glm/common.hpp>
 #include <QComboBox>
 #include "CgEvents/materialchangeevent.h"
+#include "CgEvents/BoxChangedEvent.h"
 
 QT_BEGIN_NAMESPACE
 class QSlider;
@@ -75,6 +76,16 @@ public:
 
     void createMats();
     
+    void createComboBox(QComboBox *combo);
+    void clearComboBox(QComboBox *combo);
+    void selectMaterialShaderOn();
+
+    void selectMaterialShaderOff();
+
+    void selectShader();
+    void selectInterpolation();
+public slots:
+    void selectColor();
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
@@ -110,8 +121,15 @@ private:
     std::vector<glm::vec4> def;
     std::vector<glm::vec4> spec;
     std::vector<float>scala;
-     QComboBox* combo_box_objekt;
+    std::vector<QString> names;
 
+
+     QComboBox* combo_box_material;
+     QComboBox* combo_box_shader;
+     QComboBox* combo_box_interpolation;
+
+     void clearBoxes();
+     
 private slots:
 
 
@@ -128,6 +146,9 @@ private slots:
     void slotMyButton1Pressed();
     void slotButtonGroupSelectionChanged();
     void slotLoadMeshFile();
+
+    void selectShaderSlot();
+    void selectInterpolationSlot();
 
 
 
